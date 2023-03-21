@@ -1,0 +1,112 @@
+DROP DATABASE IF EXISTS buscompany;
+CREATE DATABASE `buscompany`;
+USE `buscompany`;
+
+CREATE TABLE bus (
+   name VARCHAR(50) NOT NULL,
+   placeCount INT NOT NULL,
+   UNIQUE(name),
+   PRIMARY KEY (name)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+INSERT INTO bus VALUES("марка автобуса", 10);
+INSERT INTO bus VALUES("марка другого автобуса", 5);
+
+CREATE TABLE user (
+	userId INT NOT NULL AUTO_INCREMENT,
+	login VARCHAR(50) NOT NULL,
+    userType VARCHAR(50),
+    PRIMARY KEY (login),
+    KEY (userId)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+    
+CREATE TABLE admin (
+   userId INT NOT NULL,
+   firstName VARCHAR(50) NOT NULL,
+   lastName VARCHAR(50) NOT NULL,
+   patronymic VARCHAR(50),
+   position VARCHAR(50) NOT NULL,
+   password VARCHAR(100) NOT NULL,
+   salt BLOB, 
+   FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE client (
+   userId INT NOT NULL,
+   firstName VARCHAR(50) NOT NULL,
+   lastName VARCHAR(50) NOT NULL,
+   patronymic VARCHAR(50),
+   email VARCHAR(50) NOT NULL,
+   phone VARCHAR(50) NOT NULL,
+   password VARCHAR(50) NOT NULL,
+   salt BLOB,
+   FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE trip (
+   id INT NOT NULL AUTO_INCREMENT,
+   fromStation VARCHAR(50) NOT NULL,
+   toStation VARCHAR(50) NOT NULL,
+   start TIME,
+   duration TIME,
+   price DECIMAL NOT NULL,
+   busName VARCHAR(50) NOT NULL,
+   approved BOOL,
+   PRIMARY KEY (id),
+   FOREIGN KEY (busName) REFERENCES bus(name)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE schedule (
+   id INT NOT NULL AUTO_INCREMENT,
+   tripId INT NOT NULL,
+   fromDate DATE,
+   toDate DATE,
+   period VARCHAR(250) NOT NULL,
+   PRIMARY KEY (id),
+   FOREIGN KEY (tripId) REFERENCES trip(id) ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE tripDate (
+   id INT NOT NULL AUTO_INCREMENT,
+   tripId INT NOT NULL,
+   date DATE NOT NULL,
+   freePlaces INT NOT NULL,
+   PRIMARY KEY (id),
+   FOREIGN KEY (tripId) REFERENCES trip(id) ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE orderTable (
+    id INT NOT NULL AUTO_INCREMENT,
+	clientId INT NOT NULL,
+	tripDateId INT NOT NULL,
+	totalPrice DECIMAL NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (tripDateId) REFERENCES tripDate(id) ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE passenger (
+   id INT NOT NULL AUTO_INCREMENT,
+   orderId INT NOT NULL,
+   firstName VARCHAR(50) NOT NULL,
+   lastName VARCHAR(50) NOT NULL,
+   passport VARCHAR(50) NOT NULL,
+   PRIMARY KEY (id, passport),
+   FOREIGN KEY (orderId) REFERENCES orderTable(id) ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE busPlace (
+   id INT NOT NULL AUTO_INCREMENT,
+   tripDateId INT NOT NULL,
+   place INT,
+   passengerId INT DEFAULT NULL,
+   PRIMARY KEY (id),
+   FOREIGN KEY (tripDateId) REFERENCES tripDate(id) ON DELETE CASCADE,
+   FOREIGN KEY (passengerId) REFERENCES passenger(id) ON DELETE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE TABLE sessionAttributes (
+   id VARCHAR(50) NOT NULL,
+   userId INT NOT NULL,
+   UNIQUE(id),
+   PRIMARY KEY (id)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
