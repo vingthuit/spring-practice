@@ -9,8 +9,8 @@ CREATE TABLE bus (
    PRIMARY KEY (name)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-INSERT INTO bus VALUES("марка автобуса", 10);
-INSERT INTO bus VALUES("марка другого автобуса", 5);
+INSERT INTO bus VALUES('марка автобуса', 10);
+INSERT INTO bus VALUES('марка другого автобуса', 5);
 
 CREATE TABLE user (
 	userId INT NOT NULL AUTO_INCREMENT,
@@ -61,7 +61,7 @@ CREATE TABLE schedule (
    tripId INT NOT NULL,
    fromDate DATE,
    toDate DATE,
-   period VARCHAR(250) NOT NULL,
+   tripPeriod VARCHAR(250) NOT NULL,
    PRIMARY KEY (id),
    FOREIGN KEY (tripId) REFERENCES trip(id) ON DELETE CASCADE
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;

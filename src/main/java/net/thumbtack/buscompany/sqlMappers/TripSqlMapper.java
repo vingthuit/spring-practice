@@ -16,7 +16,7 @@ public interface TripSqlMapper {
     @Options(useGeneratedKeys = true, keyProperty = "trip.id")
     void insert(@Param("trip") Trip trip);
 
-    @Insert("INSERT INTO schedule (tripId, fromDate, toDate, period) " +
+    @Insert("INSERT INTO schedule (tripId, fromDate, toDate, tripPeriod) " +
             "values (#{tripId}, #{schedule.fromDate}, #{schedule.toDate}, #{schedule.period})")
     void insertSchedule(int tripId, @Param("schedule") Schedule schedule);
 
@@ -46,7 +46,7 @@ public interface TripSqlMapper {
     void update(@Param("id") int id, @Param("trip") Trip trip);
 
     @Update("UPDATE schedule SET fromDate = #{schedule.fromDate}, toDate = #{schedule.toDate}, " +
-            "period = #{schedule.period} WHERE tripId = #{tripId}")
+            "tripPeriod = #{schedule.period} WHERE tripId = #{tripId}")
     void updateSchedule(@Param("tripId") int tripId, @Param("schedule") Schedule schedule);
 
     @Update("UPDATE tripDate SET freePlaces = freePlaces - #{placeCount} WHERE freePlaces >= #{placeCount} AND id = #{tripDate.id}")
